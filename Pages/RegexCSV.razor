@@ -1,0 +1,66 @@
+@page "/regexcsv"
+
+@using System.Text.RegularExpressions;
+@using System.Linq;
+
+<h1>Regex CSV Extractor</h1>
+
+<div class="form-group">
+    <label for="patternInput">Pattern</label>
+    <input class="monospaced form-control" id="patternInput" placeholder="(?<group>.)" @bind="_pattern"/>
+</div>
+<div class="form-group">
+    <label for="dataInput">Data</label>
+    <textarea class="monospaced form-control" id="dataInput" rows="5" @bind="_data"/>
+</div>
+<button class="btn btn-primary" @onclick="OnProcess">Process</button>
+
+<br/>
+
+@if(_ex != null) {
+    <p class="monospaced" style="color: red">@_ex</p>
+}
+
+@if(_matches != null) {
+    <table class="monospaced table">
+        <thead>
+            <tr>
+                @foreach(var group in _rex.GetGroupNames().Skip(1)) {
+                    <th scope="col">@group</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Match m in _matches)
+            {
+                <tr>
+                    @foreach(var v in (m.Groups as IEnumerable<Group>).Skip(1)) {
+                        <td>@v</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    string _pattern = "";
+    string _data = "";
+    
+    Regex _rex = null;
+
+    MatchCollection _matches = null;
+    Exception _ex = null;
+
+    void OnProcess() {
+        _matches = null;
+        _ex = null;
+
+        try {
+            _rex = new Regex(_pattern);
+            _matches = _rex.Matches(_data);
+        } catch (Exception ex) {
+            _ex = ex;
+        }
+    }
+}
