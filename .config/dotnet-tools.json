@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "orang.dotnet.cli": {
+      "version": "0.1.1",
+      "commands": [
+        "orang"
+      ]
+    }
+  }
+}

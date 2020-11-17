@@ -1,0 +1,1 @@
+return r\.loadResource\(o,t\(o\),e\[o\],n\)
