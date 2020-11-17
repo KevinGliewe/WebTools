@@ -9,8 +9,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
-
-  <Target Name="InjectLoadCallback" AfterTargets="Build">
-      <Exec Command="dotnet orang replace -a file -c ./InjectAssemblyLoad.Pattern.txt from-file --paths $(OutputPath)/wwwroot/_framework/blazor.webassembly.js -r ./InjectAssemblyLoad.Replace.txt from-file -v quiet"/>
-  </Target>
 </Project>

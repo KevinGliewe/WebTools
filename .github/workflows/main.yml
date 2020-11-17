@@ -14,11 +14,6 @@ jobs:
     steps:
     # uses GitHub's checkout action to checkout code form the master branch
     - uses: actions/checkout@v2
-  
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
 
     - name: Setup .NET 5 SDK
       uses: actions/setup-dotnet@v1.6.0
@@ -27,19 +22,19 @@ jobs:
       env:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
-    - name: Setup side by side .NET SDKs on *nix
-      if: matrix.os != 'windows-latest'
-      run: |
-        rsync -a ${DOTNET_ROOT/3.1.101/5.0.100}/* $DOTNET_ROOT/
-
     - name: .NET Info
       run: dotnet --info
 
-    - name: Restore .NET Tools
-      run: dotnet tool Restore
-
-    - name: Publish .NET Core Project
+    - name: Publish .NET Project
       run: dotnet publish WebTools.csproj -c Release -o release --nologo
+
+    # https://medium.com/@lakindu1995/installing-net-core-sdk-in-ssh-linux-environment-fec0edf9e116
+    - name: Patch blazor.webassembly.js
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: "return r.loadResource\\(o,t\\(o\\),e\\[o\\],n\\)"
+        replace: "var p = r.loadResource(o,t(o),e[o],n); p.response.then((x) => { if (typeof window.loadResourceCallback === 'function') { window.loadResourceCallback(Object.keys(e).length, o, x);}}); return p;"
+        include: "blazor.webassembly.js"
     
     # changes the base-tag in index.html from '/' to 'WebTools' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to WebTools
