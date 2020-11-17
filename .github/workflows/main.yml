@@ -25,7 +25,9 @@ jobs:
 
     # publishes Blazor project to the release-folder
     - name: Publish .NET Core Project
-      run: dotnet publish WebTools.csproj -c Release -o release --nologo
+      run: |
+        dotnet tool restore
+        dotnet publish WebTools.csproj -c Release -o release --nologo
     
     # changes the base-tag in index.html from '/' to 'WebTools' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to WebTools
