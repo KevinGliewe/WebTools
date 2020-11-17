@@ -21,11 +21,14 @@ jobs:
     - name: Setup .NET 5.0.100 SDK
       run: curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version 5.0.100
     
-    # publishes Blazor project to the release-folder
+    - name: .NET Info
+      run: dotnet --info
+
+    - name: Restore .NET Tools
+      run: dotnet tool Restore
+
     - name: Publish .NET Core Project
-      run: |
-        dotnet tool restore
-        dotnet publish WebTools.csproj -c Release -o release --nologo
+      run: dotnet publish WebTools.csproj -c Release -o release --nologo
     
     # changes the base-tag in index.html from '/' to 'WebTools' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to WebTools
