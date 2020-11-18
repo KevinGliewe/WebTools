@@ -1,0 +1,81 @@
+@page "/regexreplace"
+
+@using System.Text.RegularExpressions;
+@using System.Linq;
+@using System.Dynamic
+@using System.IO
+@using Scriban
+@using Scriban.Runtime
+
+<h1>Regex Replacer</h1>
+
+<div class="form-group">
+    <label for="patternInput">Pattern</label>
+    <input class="monospaced form-control" id="patternInput" placeholder="(?<group>.)" @bind="_pattern" />
+</div>
+<div class="form-group">
+    <label for="patternInput">Replace</label> <a href="https://github.com/lunet-io/scriban/blob/master/doc/language.md">Scriban</a>
+    <input class="monospaced form-control" id="patternInput" placeholder="{{match}}" @bind="_replace" />
+</div>
+<div class="form-group">
+    <label for="dataInput">Data</label>
+    <textarea class="monospaced form-control" id="dataInput" rows="5" @bind="_data" />
+</div>
+<button class="btn btn-primary" @onclick="OnProcess">Process</button>
+
+@if (_result != null) {
+    <div class="form-group">
+        <label for="dataInput">Result</label>
+        <textarea class="monospaced form-control" rows="5" readonly>
+                @_result
+        </textarea>
+    </div>
+}
+
+<br />
+
+@if (_ex != null) {
+    <p class="monospaced" style="color: red">@_ex</p>
+}
+
+@code { 
+    string _pattern = "";
+    string _replace = "";
+    string _data = "";
+
+    Regex _rex = null;
+
+    string _result = "";
+    Exception _ex = null;
+
+    void OnProcess() {
+        _result = "";
+        _ex = null;
+
+        try {
+            string key = _data.GetHashCode().ToString();
+
+            _rex = new Regex(_pattern);
+
+            var template = Template.Parse(_replace);
+
+
+            _result = _rex.Replace(_data, (delegate (Match match) {
+                var scriptObjects = new ScriptObject();
+                scriptObjects.Add("match", match);
+
+                var context = new TemplateContext();
+                context.PushGlobal(scriptObjects);
+
+                foreach (var v in (match.Groups as IEnumerable<Group>).Skip(1))
+                    scriptObjects.Add(v.Name, v.Value);
+
+                return template.Render(context);
+
+            }));
+        } catch (Exception ex) {
+            _ex = ex;
+        }
+    }
+
+}
