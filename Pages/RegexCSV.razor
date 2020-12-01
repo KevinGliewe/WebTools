@@ -3,6 +3,7 @@
 @using System.Text.RegularExpressions;
 @using System.Linq;
 
+
 <h1>Regex CSV Extractor</h1>
 
 <div class="form-group">
@@ -22,20 +23,24 @@
 }
 
 @if(_matches != null) {
-    <table class="monospaced table">
+    <table class="table table-bordered table-striped responsive-utilities">
         <thead>
             <tr>
-                @foreach(var group in _rex.GetGroupNames().Skip(1)) {
-                    <th scope="col">@group</th>
+                <th class="is-hidden" scope="col"></th>
+                @foreach (var group in _rex.GetGroupNames().Skip(1)) {
+                    <th class="is-hidden" scope="col">@group</th>
                 }
             </tr>
         </thead>
         <tbody>
-            @foreach (Match m in _matches)
+            @for (int i = 0; i < _matches.Count; i++)
             {
+                var m = _matches[i];
                 <tr>
-                    @foreach(var v in (m.Groups as IEnumerable<Group>).Skip(1)) {
-                        <td>@v</td>
+                    <td class="is-hidden">@i</td>
+                    @foreach (var v in (m.Groups as IEnumerable<Group>).Skip(1))
+                    {
+                        <td class="is-visible">@v</td>
                     }
                 </tr>
             }
