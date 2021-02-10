@@ -43,15 +43,18 @@ void DeleteCompressed(string file) {
 foreach(var inj in toInject) {
     Console.WriteLine($"Injecting into {inj.File}");
 
-    var data = File.ReadAllText(inj.File);
-    var data_r = Regex.Replace(data, inj.Pattern, inj.Replace);
-    
-    if( data == data_r )
-        Console.WriteLine("!! Could not replace !!");
-    else
-        DeleteCompressed(inj.File);
+    try {
+        var data = File.ReadAllText(inj.File);
+        var data_r = Regex.Replace(data, inj.Pattern, inj.Replace);
+        File.WriteAllText(inj.File, data_r);
 
-    File.WriteAllText(inj.File, data_r);
+        if( data == data_r )
+            Console.WriteLine("!! Could not replace !!");
+        else
+            DeleteCompressed(inj.File);
+    } catch(Exception ex) {
+        Console.WriteLine(ex);
+    }
 }
 
 Console.WriteLine(GetScriptFolder());
