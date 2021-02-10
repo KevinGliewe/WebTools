@@ -10,4 +10,12 @@
     <PackageReference Include="Scriban" Version="3.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
+
+  <Target Name="InjectLoadCallback" AfterTargets="Build">
+    <Exec Command="dotnet script ./InjectAssemblyLoad.csx -- &quot;$(ProjectPath) &quot; &quot;$(OutputPath) &quot;"/>
+  </Target>
+
+  <Target Name="InjectLoadCallbackPublish" AfterTargets="AfterPublish">
+    <Exec Command="dotnet script ./InjectAssemblyLoad.csx -- &quot;$(ProjectPath) &quot; &quot;$(PublishDir) &quot;"/>
+  </Target>
 </Project>

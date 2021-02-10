@@ -27,14 +27,6 @@ jobs:
 
     - name: Publish .NET Project
       run: dotnet publish WebTools.csproj -c Release -o release --nologo
-
-    # https://medium.com/@lakindu1995/installing-net-core-sdk-in-ssh-linux-environment-fec0edf9e116
-    - name: Patch blazor.webassembly.js
-      uses: jacobtomlinson/gha-find-replace@master
-      with:
-        find: "return r.loadResource\\(o,t\\(o\\),e\\[o\\],n\\)"
-        replace: "var p = r.loadResource(o,t(o),e[o],n); p.response.then((x) => { if (typeof window.loadResourceCallback === 'function') { window.loadResourceCallback(Object.keys(e).length, o, x);}}); return p;"
-        include: "blazor.webassembly.js"
     
     # changes the base-tag in index.html from '/' to 'WebTools' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to WebTools
