@@ -15,10 +15,12 @@ using static FileUtils;
 Console.WriteLine("Args: " +  String.Join(", ", Args.Select( arg => "'" + arg + "'")));
 
 var scriptFilder = (AbsolutePath)GetScriptFolder();
-var projectPath = (AbsolutePath)(Args.Count > 0 ? Path.GetFullPath(Args[0]) : scriptFilder);
-var outPath = (AbsolutePath)(Args.Count > 1 ? Path.GetFullPath(Args[1]) : projectPath);
+var projectPath = (AbsolutePath)(Args.Count > 0 ? Path.GetFullPath(Path.GetDirectoryName(Args[0].Trim())) : scriptFilder);
+var outPath = (AbsolutePath)(Args.Count > 1 ? Path.GetFullPath(Args[1].Trim()) : projectPath);
 
-Console.WriteLine($"OutPath: {outPath}");
+Console.WriteLine($"ScriptFilder : {scriptFilder}");
+Console.WriteLine($"ProjectPath  : {projectPath}");
+Console.WriteLine($"OutPath      : {outPath}");
 
 var toInject = new [] {
     new {
@@ -56,5 +58,3 @@ foreach(var inj in toInject) {
         Console.WriteLine(ex);
     }
 }
-
-Console.WriteLine(GetScriptFolder());
