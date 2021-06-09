@@ -1,0 +1,133 @@
+﻿@page "/vsgotocallstack"
+
+@using System.Text.RegularExpressions;
+@using System.Linq;
+@using System.Dynamic
+@using System.IO
+@using Scriban
+@using Scriban.Runtime
+
+<h1>Regex Replacer</h1>
+
+<div class="form-group">
+    <label for="dataInput">CallStack</label>
+    <textarea class="form-control" id="dataInput" rows="5" @bind="_callStack" />
+</div>
+
+<div>
+    <ul>
+        @foreach (var define in _defines) {
+            <li><tt>@define.Key</tt> ➞ <tt>@define.Value</tt></li>
+        }
+    </ul>
+</div>
+
+<div class="form-group">
+    <label for="patternInput">Patter</label>
+    <input class="form-control" id="patternInput" placeholder="" @bind="_newKey" />
+    <label for="patternInput">Env. Variable</label>
+    <input class="form-control" id="patternInput" placeholder="" @bind="_newValue" />
+    <button class="btn btn-primary btn-lg" role="button" @onclick="OnAdd">Add</button>
+</div>
+
+<button class="btn btn-primary btn-lg" role="button" @onclick="OnProcess">Process</button>
+
+@if (_result != null && _result.Count > 0) {
+    <div class="form-group">
+        <label for="dataInput">Result</label><br />
+        <span class="border monospaced">
+                @foreach(var line in _result) {
+                    @if (line.Link != null)
+                    {
+                        <a href="@line.Link">@line.Line</a><br/>
+                    }
+                    else
+                    {
+                        @line.Line<br/>
+                    }
+                }
+        </span>
+    </div>
+}
+
+<br />
+
+@if (_ex != null) {
+    <p class="monospaced" style="color: red">@_ex</p>
+}
+
+@code {
+
+    class LineLink
+    {
+        public string Line { get; set; }
+        public string Link { get; set; } = null;
+
+        public LineLink(string line) => Line = line;
+    }
+
+    string _callStack = "";
+
+    Regex _rex = null;
+
+    List<LineLink> _result = new List<LineLink>();
+    Exception _ex = null;
+
+    string _newKey = "";
+    string _newValue = "";
+
+    Regex _rexFileLine = new Regex(@"\t\S+ (?<file>.+) \((?<line>\d*)\)");
+
+    Dictionary<string, string> _defines = new Dictionary<string, string>()
+    {
+        {"F:\\perforce\\depot5", "DEPOT5"},
+    };
+
+    void OnAdd()
+    {
+        _defines.Add(_newKey, _newValue);
+    }
+
+    void OnProcess() {
+        _result.Clear();
+        _ex = null;
+
+        try
+        {
+            var lines = _callStack.Split(
+                new[] { "\r\n", "\r", "\n" },
+                StringSplitOptions.None
+            );
+
+
+            foreach (var line in lines)
+            {
+                var match = _rexFileLine.Match(line);
+
+                if (match.Success)
+                {
+                    if (_result.Count == 0)
+                        throw new Exception("File definition can't be in the first Line");
+
+                    var path = match.Groups["file"].Value;
+
+                    foreach (var define in _defines)
+                    {
+                        path = path.Replace(define.Key, "{" + define.Value + "}", StringComparison.InvariantCultureIgnoreCase);
+                    }
+
+                    _result.Last().Link = "vsgoto:\\" + path + ":" + match.Groups["line"].Value;
+                }
+                else
+                {
+                    _result.Add(new LineLink(line));
+                }
+            }
+
+        } catch (Exception ex) {
+            _ex = ex;
+            _result.Clear();
+        }
+    }
+
+}
