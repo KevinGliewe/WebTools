@@ -10,6 +10,8 @@
 @using Scriban
 @using Scriban.Runtime
 
+@using GCore.Extensions.IEnumerableEx;
+
 <h1>Regex Replacer</h1>
 
 <div class="form-group">
@@ -141,9 +143,13 @@
     {
         var sb = new StringBuilder();
 
-        foreach (var line in _result)
-            sb.AppendLine($"<a href=\"{line.Link}\">{line.Line}</a>");
+        sb.AppendLine("<p style=\"font-family:'Lucida Console', monospace\">");
+
+        foreach (var (line, index, last) in _result.IterIndexLast())
+            sb.AppendLine($"<a href=\"{line.Link}\">{line.Line}</a>" + ((!last) ? "<br/>" : ""));
         
+        sb.AppendLine("</p>");
+
         ClipboardService.WriteTextAsync(sb.ToString());
     }
 
@@ -152,7 +158,7 @@
         var sb = new StringBuilder();
 
         foreach (var line in _result)
-            sb.AppendLine($"[{line.Line}]({line.Link})");
+            sb.AppendLine($"[`{line.Line}`]({line.Link})");
 
         ClipboardService.WriteTextAsync(sb.ToString());
     }
