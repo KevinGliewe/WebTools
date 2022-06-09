@@ -26,9 +26,7 @@ var toInject = new [] {
     new {
         File = outPath / "wwwroot" / "_framework" / "blazor.webassembly.js",
         Pattern = @"this.loadResource\(r,t\(r\),e\[r\],n\)",
-        Replace = @"{var p = r.loadResource(r,t(r),e[r],n); p.response.then((x) => { if (typeof window.loadResourceCallback === ""function"") { window.loadResourceCallback(Object.keys(e).length, r, x);}}); return p;}"
-        // Pattern = @"return r\.loadResource\(o,t\(o\),e\[o\],n\)",
-        // Replace = @"var p = r.loadResource(o,t(o),e[o],n); p.response.then((x) => { if (typeof window.loadResourceCallback === ""function"") { window.loadResourceCallback(Object.keys(e).length, o, x);}}); return p;"
+        Replace = @"{var p = this.loadResource(r,t(r),e[r],n); p.response.then((x) => { if (typeof window.loadResourceCallback === ""function"") { window.loadResourceCallback(Object.keys(e).length, r, x);}}); return p;}"
     },
 };
 
