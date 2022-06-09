@@ -12,15 +12,17 @@
     <PackageReference Include="GCore" Version="1.14.0" />
   </ItemGroup>
 
+  <!--
   <Target Name="InstallTools" BeforeTargets="Build">
     <Exec Command="dotnet tool restore" />
   </Target>
 
   <Target Name="InjectLoadCallback" AfterTargets="Build">
-    <Exec Command="dotnet script ./InjectAssemblyLoad.csx -- &quot;$(ProjectPath) &quot; &quot;$(OutputPath) &quot;" />
+    <Exec Command="dotnet script ./InjectAssemblyLoad.csx -##################- &quot;$(ProjectPath) &quot; &quot;$(OutputPath) &quot;" />
   </Target>
 
   <Target Name="InjectLoadCallbackPublish" AfterTargets="AfterPublish">
-    <Exec Command="dotnet script ./InjectAssemblyLoad.csx -- &quot;$(ProjectPath) &quot; &quot;$(PublishDir) &quot;" />
+    <Exec Command="dotnet script ./InjectAssemblyLoad.csx -##################- &quot;$(ProjectPath) &quot; &quot;$(PublishDir) &quot;" />
   </Target>
+  -->
 </Project>
